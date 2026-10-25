@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#55382d">
+  <title>Letras Café</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f3ec;
+      color: #34251e;
+    }
+    header {
+      background: #55382d;
+      color: white;
+      padding: 28px 20px;
+    }
+    header h1 { font-family: Georgia, serif; margin: 0; }
+    header p { margin-bottom: 0; }
+    main { max-width: 650px; margin: auto; padding: 18px; }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      border: 0;
+      border-radius: 24px;
+      padding: 11px 15px;
+      background: #e8d8c5;
+      color: #34251e;
+      cursor: pointer;
+    }
+    button.active, .primary {
+      background: #55382d;
+      color: white;
+    }
+    section { margin-top: 22px; }
+    .hidden { display: none; }
+    .card {
+      background: #fffdf9;
+      border: 1px solid #e8ddd1;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .price { font-weight: bold; color: #76503b; }
+    .stamps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .stamp {
+      aspect-ratio: 1;
+      border: 2px dashed #b99b83;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+    }
+    .stamp.filled { background: #e8d8c5; border-style: solid; }
+    footer { text-align: center; padding: 24px; color: #78675c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Letras Café ☕</h1>
+    <p>Un espacio para disfrutar, leer y compartir.</p>
+  </header>
+
+  <main>
+    <nav>
+      <button class="active" data-page="menu">Menú</button>
+      <button data-page="fidelidad">Mi tarjeta</button>
+      <button data-page="novedades">Novedades</button>
+    </nav>
+
+    <section id="menu">
+      <h2>Nuestro menú</h2>
+      <p>Descubre tu próxima bebida favorita.</p>
+      <div class="card">
+        <h3>☕ Capuchino</h3>
+        <p>Espresso con leche cremosa y espuma suave.</p>
+        <span class="price">Precio por confirmar</span>
+      </div>
+      <div class="card">
+        <h3>🍵 Matcha latte</h3>
+        <p>Una mezcla delicada de matcha y leche.</p>
+        <span class="price">Precio por confirmar</span>
+      </div>
+      <div class="card">
+        <h3>🍫 Mocha</h3>
+        <p>La combinación de café y chocolate.</p>
+        <span class="price">Precio por confirmar</span>
+      </div>
+      <p>Los productos y precios son ejemplos editables.</p>
+    </section>
+
+    <section id="fidelidad" class="hidden">
+      <h2>Mi tarjeta de fidelidad</h2>
+      <p>Acumula 8 sellos para conseguir una recompensa.</p>
+      <div class="stamps" id="stamps"></div>
+      <p id="count">0 de 8 sellos</p>
+      <p id="reward">Te faltan 8 sellos para tu recompensa.</p>
+      <button id="add" class="primary">Simular un sello</button>
+      <button id="reset">Reiniciar demostración</button>
+      <p>Esta tarjeta es una demostración. Los sellos aún no se guardan ni son válidos para compras reales.</p>
+    </section>
+
+    <section id="novedades" class="hidden">
+      <h2>Novedades de Letras Café ✨</h2>
+      <div class="card">
+        <h3>Descubre el matcha latte</h3>
+        <p>Una bebida cremosa para disfrutar de algo diferente en tu próxima visita.</p>
+      </div>
+      <div class="card">
+        <h3>Café y buenas historias</h3>
+        <p>Tu espacio para hacer una pausa y disfrutar de tus momentos favoritos.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Letras Café · Gracias por visitarnos ❤️</footer>
+
+  <script>
+    document.querySelectorAll("[data-page]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("main section").forEach(section => {
+          section.classList.toggle("hidden", section.id !== button.dataset.page);
+        });
+        document.querySelectorAll("[data-page]").forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
+      });
+    });
+
+    let stamps = 0;
+
+    function renderStamps() {
+      const grid = document.getElementById("stamps");
+      grid.innerHTML = "";
+
+      for (let i = 0; i < 8; i++) {
+        const stamp = document.createElement("div");
+        stamp.className = "stamp" + (i < stamps ? " filled" : "");
+        stamp.textContent = i < stamps ? "☕" : "＋";
+        grid.appendChild(stamp);
+      }
+
+      document.getElementById("count").textContent =
+        stamps + " de 8 sellos";
+
+      document.getElementById("reward").textContent =
+        stamps === 8
+          ? "¡Recompensa desbloqueada en la demostración!"
+          : "Te faltan " + (8 - stamps) + " sellos para tu recompensa.";
+    }
+
+    document.getElementById("add").addEventListener("click", () => {
+      stamps = Math.min(8, stamps + 1);
+      renderStamps();
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      stamps = 0;
+      renderStamps();
+    });
+
+    renderStamps();
+  </script>
+</body>
+</html>
