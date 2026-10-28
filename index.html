@@ -180,6 +180,12 @@
   <button id="buscarClientesBtn" class="primary">
     Cargar lista de clientes
   </button>
+      
+<input
+  type="text"
+  id="filtroClientes"
+  placeholder="Buscar cliente por nombre o teléfono..."
+/>
 
   <p id="adminMensaje"></p>
   <div id="listaClientes"></div>
@@ -243,7 +249,9 @@
       
   renderStamps();
 }
-    async function cargarClientes() {
+  let todosLosClientes = [];
+
+async function cargarClientes() {
   const mensaje = document.getElementById("adminMensaje");
   const lista = document.getElementById("listaClientes");
 
@@ -265,6 +273,8 @@
 
   mensaje.textContent = "Clientes encontrados: " + data.length;
 
+  todosLosClientes = data;
+  
   data.forEach((cliente) => {
     const tarjeta = document.createElement("div");
     tarjeta.className = "customer-card";
@@ -346,6 +356,17 @@ botonCanjear.addEventListener("click", async () => {
 }
 
 document.getElementById("buscarClientesBtn").addEventListener("click", cargarClientes);
+
+document.getElementById("filtroClientes").addEventListener("input", (event) => {
+  const filtro = event.target.value.toLowerCase().trim();
+
+  document.querySelectorAll("#listaClientes .customer-card").forEach((tarjeta) => {
+    tarjeta.style.display = tarjeta.textContent.toLowerCase().includes(filtro)
+      ? ""
+      : "none";
+  });
+});
+
    
     function renderStamps() {
       const grid = document.getElementById("stamps");
