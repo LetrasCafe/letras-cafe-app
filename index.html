@@ -483,6 +483,63 @@ if (!adminError) {
   panelAdmin.classList.remove("hidden");
 }
 });
+    
+document.getElementById("nuevaPasswordForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const nuevaPassword = document.getElementById("nuevaPassword").value;
+  const mensaje = document.getElementById("nuevaPasswordMensaje");
+
+  mensaje.textContent = "Guardando nueva contraseña...";
+
+  const { error } = await supabaseClient.auth.updateUser({
+    password: nuevaPassword
+  });
+
+  if (error) {
+    mensaje.textContent = "No se pudo cambiar la contraseña. Abre nuevamente el enlace de recuperación e inténtalo otra vez.";
+    console.error("Error al cambiar la contraseña:", error.message);
+    return;
+  }
+
+  mensaje.textContent = "¡Contraseña actualizada correctamente! Ya puedes iniciar sesión con tu nueva contraseña.";
+  document.getElementById("nuevaPasswordForm").reset();
+});
+    
+supabaseClient.auth.onAuthStateChange((event) => {
+  if (event === "PASSWORD_RECOVERY") {
+    const pantalla = document.getElementById("restablecerPassword");
+    pantalla.classList.remove("hidden");
+    pantalla.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+});
+
   </script>
+  <section id="restablecerPassword" class="hidden">
+  <div class="card">
+    <h2>Crear nueva contraseña</h2>
+    <p>Escribe tu nueva contraseña para recuperar tu cuenta de Letras Café.</p>
+
+    <form id="nuevaPasswordForm">
+      <label for="nuevaPassword">Nueva contraseña</label>
+      <input
+        id="nuevaPassword"
+        type="password"
+        minlength="6"
+        autocomplete="new-password"
+        required
+      >
+
+      <button type="submit" class="primary">
+        Guardar nueva contraseña
+      </button>
+    </form>
+
+    <p id="nuevaPasswordMensaje" role="status"></p>
+  </div>
+</section>
 </body>
 </html>
