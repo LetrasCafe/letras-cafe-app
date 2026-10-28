@@ -272,6 +272,34 @@
 
     const sellos = document.createElement("p");
     sellos.textContent = "Sellos: " + cliente.sellos + " de 5";
+    const botonSello = document.createElement("button");
+botonSello.textContent = "Agregar sello";
+botonSello.className = "primary";
+botonSello.disabled = cliente.sellos >= 5;
+
+botonSello.addEventListener("click", async () => {
+  botonSello.disabled = true;
+  const { data, error } = await supabaseClient.rpc(
+    "agregar_sello_cliente",
+    { cliente_id: cliente.cliente_id }
+  );
+
+  if (error) {
+    mensaje.textContent = "No se pudo agregar el sello: " + error.message;
+    botonSello.disabled = false;
+    return;
+  }
+
+  cliente.sellos = data;
+  sellos.textContent = "Sellos: " + cliente.sellos + " de 5";
+  botonSello.disabled = cliente.sellos >= 5;
+
+  mensaje.textContent = cliente.sellos === 5
+    ? "¡Recompensa desbloqueada! El cliente ganó una bebida gratis."
+    : "Sello agregado correctamente.";
+});
+
+tarjeta.appendChild(botonSello);
 
     tarjeta.appendChild(nombre);
     tarjeta.appendChild(telefono);
