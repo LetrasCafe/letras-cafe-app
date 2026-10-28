@@ -117,6 +117,28 @@
     </form>
   </div>
 </section>
+    <section id="login" class="hidden">
+  <h2>Iniciar sesión</h2>
+  <p>Accede a tu tarjeta de fidelidad de Letras Café.</p>
+
+  <div class="card">
+    <form id="loginForm">
+      <label for="loginEmail">Correo electrónico</label>
+      <input id="loginEmail" type="email"
+        autocomplete="email" required>
+
+      <label for="loginPassword">Contraseña</label>
+      <input id="loginPassword" type="password"
+        autocomplete="current-password" required>
+
+      <button type="submit" class="primary">
+        Entrar
+      </button>
+
+      <p id="loginMensaje" role="status"></p>
+    </form>
+  </div>
+</section>
 
     <section id="menu">
       <h2>Nuestro menú</h2>
@@ -238,6 +260,27 @@
   mensaje.textContent = data.session
     ? "¡Cuenta creada! Ya puedes continuar."
     : "¡Registro iniciado! Revisa tu correo para confirmar tu cuenta.";
+});
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const mensaje = document.getElementById("loginMensaje");
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  mensaje.textContent = "Iniciando sesión...";
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    mensaje.textContent = "No se pudo iniciar sesión. Verifica tu correo y contraseña.";
+    return;
+  }
+
+  mensaje.textContent = "¡Sesión iniciada correctamente!";
 });
   </script>
 </body>
