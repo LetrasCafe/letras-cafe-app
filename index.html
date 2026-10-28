@@ -201,12 +201,38 @@
     });
 
     let stamps = 0;
+    let currentUser = null;
+    async function loadCustomerCard() {
+  const { data: { user }, error: authError } =
+    await supabaseClient.auth.getUser();
 
+  if (authError || !user) {
+    currentUser = null;
+    return;
+  }
+
+  currentUser = user;
+
+  const { data, error } = await supabaseClient
+    .from("Clientes")
+    .select('"Sellos"')
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Error al cargar la tarjeta:", error.message);
+    return;
+  }
+
+  stamps = data.Sellos ?? 0;
+  renderStamps();
+}
+   
     function renderStamps() {
       const grid = document.getElementById("stamps");
       grid.innerHTML = "";
 
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 5; i++) {
         const stamp = document.createElement("div");
         stamp.className = "stamp" + (i < stamps ? " filled" : "");
         stamp.textContent = i < stamps ? "☕" : "＋";
@@ -214,15 +240,15 @@
       }
 
       document.getElementById("count").textContent =
-        stamps + " de 8 sellos";
+        stamps + " de 5 sellos";
 
       document.getElementById("reward").textContent =
-        stamps === 8
+        stamps >= 5
           ? "¡Recompensa desbloqueada en la demostración!"
-          : "Te faltan " + (8 - stamps) + " sellos para tu recompensa.";
+          : "Te faltan " + (5 - stamps) + " sellos para tu recompensa.";
     }
 
-    renderStamps();
+    loadCustomerCard();
     document.getElementById("registroForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -271,7 +297,8 @@
     return;
   }
 
-  mensaje.textContent = "¡Sesión iniciada correctamente!";
+ mensaje.textContent = "¡Sesión iniciada correctamente!";
+await loadCustomerCard();
 });
   </script>
 </body>
