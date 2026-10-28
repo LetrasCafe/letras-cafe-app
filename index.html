@@ -222,16 +222,6 @@
           : "Te faltan " + (8 - stamps) + " sellos para tu recompensa.";
     }
 
-    document.getElementById("add").addEventListener("click", () => {
-      stamps = Math.min(8, stamps + 1);
-      renderStamps();
-    });
-
-    document.getElementById("reset").addEventListener("click", () => {
-      stamps = 0;
-      renderStamps();
-    });
-
     renderStamps();
     document.getElementById("registroForm").addEventListener("submit", async (event) => {
   event.preventDefault();
