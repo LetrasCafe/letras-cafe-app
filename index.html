@@ -135,7 +135,12 @@
         Entrar
       </button>
 
+      <p>
+        <a href="#" id="recuperarPassword">¿Olvidaste tu contraseña?</a>
+      </p>
+
       <p id="loginMensaje" role="status"></p>
+
     </form>
   </div>
 </section>
@@ -389,6 +394,7 @@ document.getElementById("filtroClientes").addEventListener("input", (event) => {
     }
 
     loadCustomerCard();
+    
     document.getElementById("registroForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -431,6 +437,33 @@ document.getElementById("filtroClientes").addEventListener("input", (event) => {
     email,
     password
   });
+      
+document.getElementById("recuperarPassword").addEventListener("click", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const mensaje = document.getElementById("loginMensaje");
+
+  if (!email) {
+    mensaje.textContent = "Escribe tu correo electrónico para recuperar tu contraseña.";
+    document.getElementById("loginEmail").focus();
+    return;
+  }
+
+  mensaje.textContent = "Enviando correo de recuperación...";
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://letrascafe.github.io/letras-cafe-app/"
+  });
+
+  if (error) {
+    mensaje.textContent = "No se pudo enviar el correo. Inténtalo nuevamente.";
+    console.error("Error al recuperar contraseña:", error.message);
+    return;
+  }
+
+  mensaje.textContent = "Si el correo está registrado, recibirás instrucciones para restablecer tu contraseña. Revisa también el correo no deseado.";
+});
 
   if (error) {
     mensaje.textContent = "No se pudo iniciar sesión. Verifica tu correo y contraseña.";
