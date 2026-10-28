@@ -293,16 +293,48 @@ botonSello.addEventListener("click", async () => {
   cliente.sellos = data;
   sellos.textContent = "Sellos: " + cliente.sellos + " de 5";
   botonSello.disabled = cliente.sellos >= 5;
+  botonCanjear.disabled = cliente.sellos < 5;
 
   mensaje.textContent = cliente.sellos === 5
     ? "¡Recompensa desbloqueada! El cliente ganó una bebida gratis."
     : "Sello agregado correctamente.";
+});
+    const botonCanjear = document.createElement("button");
+botonCanjear.textContent = "Canjear recompensa y reiniciar tarjeta";
+botonCanjear.className = "primary";
+botonCanjear.disabled = cliente.sellos < 5;
+
+botonCanjear.addEventListener("click", async () => {
+  if (!confirm("Confirma que ya entregaste la bebida gratis al cliente.")) {
+    return;
+  }
+
+  botonCanjear.disabled = true;
+
+  const { data, error } = await supabaseClient.rpc(
+    "canjear_recompensa_cliente",
+    { cliente_id: cliente.cliente_id }
+  );
+
+  if (error) {
+    mensaje.textContent = "No se pudo canjear la recompensa: " + error.message;
+    botonCanjear.disabled = cliente.sellos < 5;
+    return;
+  }
+
+  cliente.sellos = data;
+  sellos.textContent = "Sellos: " + cliente.sellos + " de 5";
+  botonSello.disabled = false;
+  botonCanjear.disabled = true;
+
+  mensaje.textContent = "Recompensa canjeada. La tarjeta comenzó un nuevo ciclo.";
 });
     
     tarjeta.appendChild(nombre);
     tarjeta.appendChild(telefono);
     tarjeta.appendChild(sellos);
     tarjeta.appendChild(botonSello);
+    tarjeta.appendChild(botonCanjear);
 
     lista.appendChild(tarjeta);
   });
