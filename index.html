@@ -238,6 +238,50 @@
   stamps = data.Sellos ?? 0;
   renderStamps();
 }
+    async function cargarClientes() {
+  const mensaje = document.getElementById("adminMensaje");
+  const lista = document.getElementById("listaClientes");
+
+  mensaje.textContent = "Cargando clientes...";
+  lista.innerHTML = "";
+
+  const { data, error } = await supabaseClient.rpc("buscar_clientes");
+
+  if (error) {
+    mensaje.textContent = "No se pudieron cargar los clientes. Verifica que hayas iniciado sesión con la cuenta autorizada.";
+    console.error("Error al buscar clientes:", error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    mensaje.textContent = "Todavía no hay clientes registrados.";
+    return;
+  }
+
+  mensaje.textContent = "Clientes encontrados: " + data.length;
+
+  data.forEach((cliente) => {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "customer-card";
+
+    const nombre = document.createElement("p");
+    nombre.textContent = cliente.nombre || "Sin nombre";
+
+    const telefono = document.createElement("p");
+    telefono.textContent = "Teléfono: " + (cliente.telefono || "No registrado");
+
+    const sellos = document.createElement("p");
+    sellos.textContent = "Sellos: " + cliente.sellos + " de 5";
+
+    tarjeta.appendChild(nombre);
+    tarjeta.appendChild(telefono);
+    tarjeta.appendChild(sellos);
+
+    lista.appendChild(tarjeta);
+  });
+}
+
+document.getElementById("buscarClientesBtn").addEventListener("click", cargarClientes);
    
     function renderStamps() {
       const grid = document.getElementById("stamps");
