@@ -353,7 +353,17 @@ document.getElementById("buscarClientesBtn").addEventListener("click", cargarCli
   }
 
  mensaje.textContent = "¡Sesión iniciada correctamente!";
+
 await loadCustomerCard();
+
+const panelAdmin = document.getElementById("adminSellos");
+panelAdmin.classList.add("hidden");
+
+const { error: adminError } = await supabaseClient.rpc("buscar_clientes");
+
+if (!adminError) {
+  panelAdmin.classList.remove("hidden");
+}
 });
   </script>
 </body>
