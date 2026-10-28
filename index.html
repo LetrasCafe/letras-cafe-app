@@ -82,7 +82,6 @@
 
   <main>
     <nav>
-      <button class="active" data-page="menu">Menú</button>
       <button data-page="fidelidad">Mi tarjeta</button>
       <button data-page="novedades">Novedades</button>
       <button data-page="registro">Registrarme</button>
@@ -162,8 +161,10 @@
       <p>Los productos y precios son ejemplos editables.</p>
     </section>
 
-   <section id="fidelidad" class="hidden">
+   
+<section id="fidelidad" class="hidden">
   <h2>Mi tarjeta de fidelidad</h2>
+  <h3 id="nombreClienteTarjeta"></h3>
   <p>Acumula 5 sellos para conseguir una recompensa.</p>
 
   <div class="stamps" id="stamps"></div>
@@ -226,7 +227,7 @@
 
   const { data, error } = await supabaseClient
     .from("Clientes")
-    .select('"Sellos"')
+    .select('"Sellos", "Nombre"')
     .eq("user_id", user.id)
     .single();
 
@@ -236,6 +237,10 @@
   }
 
   stamps = data.Sellos ?? 0;
+      
+      document.getElementById("nombreClienteTarjeta").textContent =
+  data.Nombre || "Cliente";
+      
   renderStamps();
 }
     async function cargarClientes() {
