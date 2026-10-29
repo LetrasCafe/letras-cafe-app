@@ -437,9 +437,28 @@ document.getElementById("filtroClientes").addEventListener("input", (event) => {
     email,
     password
   });
-      
+
+  if (error) {
+    mensaje.textContent = "No se pudo iniciar sesión. Verifica tu correo y contraseña.";
+    return;
+  }
+
+ mensaje.textContent = "¡Sesión iniciada correctamente!";
+
+await loadCustomerCard();
+
+const panelAdmin = document.getElementById("adminSellos");
+panelAdmin.classList.add("hidden");
+
+const { error: adminError } = await supabaseClient.rpc("buscar_clientes");
+
+if (!adminError) {
+  panelAdmin.classList.remove("hidden");
+}
+});
+
 document.getElementById("recuperarPassword").addEventListener("click", async (event) => {
-  event.preventDefault();
+event.preventDefault();
 
   const email = document.getElementById("loginEmail").value.trim();
   const mensaje = document.getElementById("loginMensaje");
@@ -463,25 +482,6 @@ document.getElementById("recuperarPassword").addEventListener("click", async (ev
   }
 
   mensaje.textContent = "Si el correo está registrado, recibirás instrucciones para restablecer tu contraseña. Revisa también el correo no deseado.";
-});
-
-  if (error) {
-    mensaje.textContent = "No se pudo iniciar sesión. Verifica tu correo y contraseña.";
-    return;
-  }
-
- mensaje.textContent = "¡Sesión iniciada correctamente!";
-
-await loadCustomerCard();
-
-const panelAdmin = document.getElementById("adminSellos");
-panelAdmin.classList.add("hidden");
-
-const { error: adminError } = await supabaseClient.rpc("buscar_clientes");
-
-if (!adminError) {
-  panelAdmin.classList.remove("hidden");
-}
 });
     
 document.getElementById("nuevaPasswordForm").addEventListener("submit", async (event) => {
